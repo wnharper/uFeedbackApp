@@ -1,30 +1,31 @@
 import { v4 as uuid } from "uuid"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import RatingSelect from "./RatingSelect"
 import Button from "./shared/Button"
 import Card from "./shared/Card"
+import { useContext } from "react"
+import FeedbackContext from "../context/FeedbackContext"
 
-const FeedbackForm = ({ feedback, setFeedback }) => {
-  const [review, setReview] = useState("")
+const FeedbackForm = () => {
+  // context
+  const { addFeedback, feedbackEdit, postEditFeedback } =
+    useContext(FeedbackContext)
+
+  // use states
   const [message, setMessage] = useState(null)
-  const [rating, setRating] = useState(5)
   const [btnDisabled, setBtnDisabled] = useState(true)
+  const [review, setReview] = useState("")
+  const [rating, setRating] = useState(5)
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+  // use effects
 
-    // Check to see if review length is more than 10 characters
-    if (review.trim().length > 10) {
-      const newFeedback = {
-        id: uuid(),
-        rating: rating,
-        text: review,
-      }
-      setFeedback([newFeedback, ...feedback])
-      setReview("")
-      setRating(5)
+  useEffect(() => {
+    if (feedbackEdit.editmode === true) {
+      setReview(feedbackEdit.item.text)
+      setRating(feedbackEdit.item.rating)
+      setBtnDisabled(false)
     }
-  }
+  }, [feedbackEdit])
 
   const handleButton = (e) => {
     if (review === "") {
@@ -38,6 +39,28 @@ const FeedbackForm = ({ feedback, setFeedback }) => {
       setBtnDisabled(false)
     }
     setReview(e.target.value)
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    // Check to see if review length is more than 10 characters
+    if (review.trim().length > 10) {
+      const newFeedback = {
+        id: uuid(),
+        rating: rating,
+        text: review,
+      }
+
+      if (feedbackEdit.editmode === true) {
+        postEditFeedback(feedbackEdit.item.id, newFeedback)
+      } else {
+        addFeedback(newFeedback)
+      }
+
+      setReview("")
+      setRating(5)
+    }
   }
 
   return (
