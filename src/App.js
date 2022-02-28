@@ -8,11 +8,6 @@ import AboutIconLink from "./components/AboutIconLink"
 import { FeedbackProvider } from "./context/FeedbackContext"
 
 const App = () => {
-
-
-
-  
-
   return (
     <FeedbackProvider>
       <Router>

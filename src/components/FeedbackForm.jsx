@@ -47,7 +47,6 @@ const FeedbackForm = () => {
     // Check to see if review length is more than 10 characters
     if (review.trim().length > 10) {
       const newFeedback = {
-        id: uuid(),
         rating: rating,
         text: review,
       }
